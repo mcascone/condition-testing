@@ -1,0 +1,13 @@
+name: conditions tester
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test1:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Run tests
+        run: echo "Running tests"
