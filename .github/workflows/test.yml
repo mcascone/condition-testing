@@ -7,7 +7,36 @@ on:
 jobs:
   test1:
     runs-on: ubuntu-latest
-    steps:
+    env: 
+      TEST: test2
 
+    outputs: 
+      test: ${{ steps.set_output.outputs.test }}
+
+    steps:
       - name: Run tests
-        run: echo "Running tests"
+        run: echo "Running test1"
+
+      - name: set output
+        id: set_output
+        run: echo "test=$TEST" >> $GITHUB_OUTPUT
+  
+  test2:
+    needs: test1
+    env:
+      test: ${{ needs.test1.outputs.test }}
+    # if: ${{ env.test == 'test2' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run tests
+        run: echo "Running tests 2"
+
+  test3:
+    needs: test1
+    if: ${{ needs.test1.outputs.test != 'test2' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run tests
+        run: echo "env was not test2"
