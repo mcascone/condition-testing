@@ -3,6 +3,7 @@ name: conditions tester
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test1:
@@ -35,7 +36,7 @@ jobs:
 
   test3:
     environment: PROD
-    needs: test1
+    needs: [test1, test2]
 
     if: ${{ needs.test1.outputs.test == 'test2' }}
 
