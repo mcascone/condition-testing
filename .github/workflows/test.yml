@@ -8,7 +8,7 @@ jobs:
   test1:
     runs-on: ubuntu-latest
     env: 
-      TEST: test2
+      TEST: runTest2
 
     outputs: 
       test: ${{ steps.set_output.outputs.test }}
@@ -22,10 +22,11 @@ jobs:
         run: echo "test=$TEST" >> $GITHUB_OUTPUT
   
   test2:
+    environment: DEV
+
     needs: test1
-    env:
-      test: ${{ needs.test1.outputs.test }}
-    # if: ${{ env.test == 'test2' }}
+    if: ${{ needs.test1.outputs.test == 'runTest2' }}
+    
     runs-on: ubuntu-latest
 
     steps:
@@ -33,8 +34,11 @@ jobs:
         run: echo "Running tests 2"
 
   test3:
+    environment: PROD
     needs: test1
-    if: ${{ needs.test1.outputs.test != 'test2' }}
+
+    if: ${{ needs.test1.outputs.test == 'test2' }}
+
     runs-on: ubuntu-latest
 
     steps:
