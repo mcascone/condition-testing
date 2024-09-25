@@ -6,42 +6,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  test1:
+  init:
     runs-on: ubuntu-latest
-    env: 
-      TEST: runTest2
 
     outputs: 
-      test: ${{ steps.set_output.outputs.test }}
+      runDev: ${{ steps.set_output.outputs.runDev }}
+      runProd: ${{ steps.set_output.outputs.runProd }}
 
     steps:
       - name: Run tests
-        run: echo "Running test1"
+        run: echo "Running init"
 
       - name: set output
         id: set_output
-        run: echo "test=$TEST" >> $GITHUB_OUTPUT
+        run: echo "runDev=true" >> $GITHUB_OUTPUT
   
-  test2:
+  deployDev:
+    runs-on: ubuntu-latest
+    name: Deploy to DEV
     environment: DEV
+    needs: init
 
-    needs: test1
-    if: ${{ needs.test1.outputs.test == 'runTest2' }}
+    if: ${{ needs.init.outputs.runDev == 'true' }}
     
-    runs-on: ubuntu-latest
-
     steps:
-      - name: Run tests
-        run: echo "Running tests 2"
+      - name: deploy dev
+        run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
 
-  test3:
+  deployProd:
+    runs-on: ubuntu-latest
+    name: Deploy to PROD
     environment: PROD
-    needs: [test1, test2]
+    needs: [init, deployDev]
 
-    if: ${{ needs.test1.outputs.test == 'test2' }}
-
-    runs-on: ubuntu-latest
+    if: ${{ needs.init.outputs.runProd == 'true' }}
 
     steps:
-      - name: Run tests
-        run: echo "env was not test2"
+      - name: deploy prod
+        run: echo "Deploying to PROD" >> $GITHUB_STEP_SUMMARY
