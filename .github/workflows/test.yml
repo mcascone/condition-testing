@@ -19,7 +19,7 @@ jobs:
 
       - name: set output
         id: set_output
-        run: echo "runDev=true" >> $GITHUB_OUTPUT
+        run: echo "runDev=false" >> $GITHUB_OUTPUT
   
   deployDev:
     runs-on: ubuntu-latest
