@@ -31,6 +31,7 @@ jobs:
         with:
           name: stage_state
           path: stage_state
+          overwrite: true
   
   deployDev:
     runs-on: ubuntu-latest
@@ -60,6 +61,7 @@ jobs:
         with:
           name: stage_state
           path: stage_state
+          overwrite: true
 
   deployProd:
     runs-on: ubuntu-latest
