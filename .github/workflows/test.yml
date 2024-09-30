@@ -19,7 +19,16 @@ jobs:
 
       - name: set output
         id: set_output
-        run: echo "runDev=false" >> $GITHUB_OUTPUT
+        run: echo "runDev=true" >> $GITHUB_OUTPUT
+
+      - name: stage state
+        run: echo $GITHUB_JOB > stage_state
+
+      - name: archive state file
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage_state
+          path: stage_state
   
   deployDev:
     runs-on: ubuntu-latest
@@ -32,6 +41,14 @@ jobs:
     steps:
       - name: deploy dev
         run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
+
+      - name: get stage state
+        uses: actions/download-artifact@v4
+        with:
+          name: stage_state
+
+      - name: read stage state
+        run: cat stage_state
 
   deployProd:
     runs-on: ubuntu-latest
