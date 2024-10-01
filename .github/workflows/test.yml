@@ -103,6 +103,7 @@ jobs:
       - name: Approve Pending Deployment
         if: steps.pending-deployments.outputs.pendingDeployments != '[]'
         run: |
+          echo "ENVID: $ENVID"
           gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"         \
             --method POST                                 \
