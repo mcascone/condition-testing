@@ -91,12 +91,12 @@ jobs:
       - name: Get Pending Deployments
         id: pending-deployments
         run: |
-          pendingDeployments=$(gh api -H "Accept: application/vnd.github+json" \
+          gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"                              \
             /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments \
-            --verbose)
+            --verbose
 
-          echo "pending=$pendingDeployments" >> $GITHUB_OUTPUT
+          echo "pending=true" >> $GITHUB_OUTPUT
       
       - name: Approve Pending Deployment
         if: steps.pending-deployments.outputs.pending != '[]'
