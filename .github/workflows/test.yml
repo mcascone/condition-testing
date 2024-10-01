@@ -89,7 +89,17 @@ jobs:
           environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
           echo "ENVID=$environmentId" >> $GITHUB_ENV
       
+      - name: Get Pending Deployments
+        id: pending-deployments
+        run: |
+          pendingDeployments=$(gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28"                              \
+            /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments)
+
+          echo "PENDING_DEPLOYMENTS=$pendingDeployments" >> $GITHUB_ENV
+      
       - name: Approve Pending Deployment
+        if: steps.pending-deployments.outputs.pendingDeployments != '[]'
         run: |
           gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"         \
@@ -97,7 +107,7 @@ jobs:
             -F environment_ids[]=$ENVID                   \
             -f state="approved"                           \
             -f comment="Auto-Approved by GitHub Actions"  \
-            /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments
+            /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
   deployProd:
     runs-on: ubuntu-latest
