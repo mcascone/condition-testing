@@ -89,7 +89,7 @@ jobs:
           environmentId=$(cat envs | jq -r '.environments[] | select(.name=="DEV") | .id')
 
           # Set output
-          echo "envId::$environmentId" >> $GITHUB_ENV
+          echo "envId=$environmentId" >> $GITHUB_ENV
       
       - name: Show me Environment Id
         run: |
