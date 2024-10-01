@@ -109,7 +109,7 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"         \
             --method POST                                 \
-            -f "environment_ids[]=$ENVID"                 \
+            -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
             --verbose \
