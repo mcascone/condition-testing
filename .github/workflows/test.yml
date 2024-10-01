@@ -82,19 +82,22 @@ jobs:
       - name: Get Environment Id
         id: environment-id
         run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28"         \
-            /repos/${{ github.repository }}/environments > envs
+          envs=$(gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28"                \
+            /repos/${{ github.repository }}/environments)
 
-          environmentId=$(cat envs | jq -r '.environments[] | select(.name=="DEV") | .id')
-
-          # Set output
+          environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
           echo "envId=$environmentId" >> $GITHUB_ENV
       
-      - name: Show me Environment Id
+      - name: Approve Pending Deployment
         run: |
-          echo "Environment Id for Prod is $envId"
-
+          gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28"         \
+            --method POST                                 \
+            -F environment_ids[]=$envId                   \
+            -f "state=approved"                           \
+            -f "comment=Auto-Approved by GitHub Actions"  \
+            /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployment
 
   deployProd:
     runs-on: ubuntu-latest
