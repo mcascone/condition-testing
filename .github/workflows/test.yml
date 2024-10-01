@@ -12,6 +12,7 @@ jobs:
     outputs: 
       runDev: ${{ steps.set_output.outputs.runDev }}
       runProd: ${{ steps.set_output.outputs.runProd }}
+      devApprovalNeeded: ${{ steps.set_output.outputs.devApprovalNeeded }}
 
     steps:
       - name: Run tests
@@ -22,6 +23,7 @@ jobs:
         run: |
           echo "runDev=true" >> $GITHUB_OUTPUT
           echo "runProd=true" >> $GITHUB_OUTPUT
+          echo "devApprovalNeeded=false" >> $GITHUB_OUTPUT
 
       - name: save stage state
         run: echo $GITHUB_JOB > stage_state
@@ -39,7 +41,7 @@ jobs:
     environment: DEV
     needs: init
 
-    if: ${{ needs.init.outputs.runDev == 'true' }}
+    if: needs.init.outputs.runDev == 'true'
     
     steps:
       - name: deploy dev
@@ -62,6 +64,18 @@ jobs:
           name: stage_state
           path: stage_state
           overwrite: true
+  
+  deployDevAutoApprove:
+    runs-on: ubuntu-latest
+    name: Deploy to DEV Auto Approve
+    needs: init
+
+    if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
+
+    steps:
+      - name: deploy dev auto approve
+        run: echo "Deploying to DEV Auto Approve" >> $GITHUB_STEP_SUMMARY
+
 
   deployProd:
     runs-on: ubuntu-latest
