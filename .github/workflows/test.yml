@@ -75,7 +75,7 @@ jobs:
 
     permissions:
       checks: read
-      deployments: read
+      deployments: write
       actions: read
 
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
