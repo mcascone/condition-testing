@@ -73,10 +73,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
 
-    permissions:
-      checks: write
-      deployments: write
-      actions: write
+    permissions: write-all
 
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
@@ -86,9 +83,7 @@ jobs:
       - name: Get Environment Id
         id: environment-id
         run: |
-          envs=$(gh api -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28"                \
-            /repos/${{ github.repository }}/environments)
+          envs=$(gh api repos/${{ github.repository }}/environments)
 
           environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
           echo "ENVID=$environmentId" >> $GITHUB_ENV
@@ -96,24 +91,19 @@ jobs:
       - name: Get Pending Deployments
         id: pending-deployments
         run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28"                              \
-            /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments \
-            --verbose
+          gh api /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments --verbose
 
           echo "pending=true" >> $GITHUB_OUTPUT
       
       - name: Approve Pending Deployment
         if: steps.pending-deployments.outputs.pending != '[]'
         run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28"         \
-            --method POST                                 \
+          gh api --method POST                            \
             -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
             --verbose \
-            /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
+            repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
   deployProd:
     runs-on: ubuntu-latest
