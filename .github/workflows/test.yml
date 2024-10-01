@@ -108,7 +108,7 @@ jobs:
             -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
-            --verbose
+            --verbose \
             /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
   deployProd:
