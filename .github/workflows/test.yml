@@ -74,9 +74,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
 
     permissions:
-      checks: read
+      checks: write
       deployments: write
-      actions: read
+      actions: write
 
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
