@@ -93,7 +93,8 @@ jobs:
         run: |
           pendingDeployments=$(gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"                              \
-            /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments)
+            /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments \
+            --verbose)
 
           echo "pending=$pendingDeployments" >> $GITHUB_OUTPUT
       
@@ -104,9 +105,10 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28"         \
             --method POST                                 \
-            -F "environment_ids[]=$ENVID"                   \
+            -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
+            --verbose
             /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
   deployProd:
