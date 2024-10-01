@@ -75,6 +75,23 @@ jobs:
     steps:
       - name: deploy dev auto approve
         run: echo "Deploying to DEV Auto Approve" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Get Environment Id
+        id: environment-id
+        run: |
+          environmentId=""
+          url="https://api.github.com/repos/${{ github.repository }}/environments"
+          response=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" $url)
+          if [ -n "$response" ]; then
+            environmentId=$(echo $response | jq -r '.environments[] | select(.name=="Prod") | .id')
+          fi
+      
+          # Set output
+          echo "::set-output name=value::$environmentId"
+      
+      - name: Show me Environment Id
+        run: |
+          echo "Environment Id for Prod is ${{ steps.environment-id.outputs.value }}"
 
 
   deployProd:
