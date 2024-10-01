@@ -53,7 +53,7 @@ jobs:
           name: stage_state
 
       - name: read stage state
-        run: echo "previous job was $(cat stage_state)"
+        run: echo "previous job was $(cat stage_state)" >> $GITHUB_STEP_SUMMARY
 
       - name: save stage state
         run: echo $GITHUB_JOB > stage_state
@@ -76,8 +76,7 @@ jobs:
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
     steps:
-      - name: deploy dev auto approve
-        run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
+      - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
       
       - name: Get Environment Id
         id: environment-id
@@ -96,7 +95,10 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28"                              \
             /repos/${{ github.repository }}/actions/runs/${{github.run_id}}/pending_deployments)
 
+          echo "PENDING_DEPLOYMENTS: " 
+          echo $pendingDeployments | jq
           echo "PENDING_DEPLOYMENTS=$pendingDeployments" >> $GITHUB_ENV
+        continue-on-error: true
       
       - name: Approve Pending Deployment
         if: steps.pending-deployments.outputs.pendingDeployments != '[]'
@@ -127,4 +129,4 @@ jobs:
           name: stage_state
 
       - name: read stage state
-        run: echo "previous job was $(cat stage_state)"
+        run: echo "previous job was $(cat stage_state)" >> $GITHUB_STEP_SUMMARY
