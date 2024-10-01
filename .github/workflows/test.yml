@@ -70,6 +70,9 @@ jobs:
     name: Deploy to DEV Auto Approve
     needs: init
 
+    env:
+      GH_TOKEN: ${{ github.token }}
+
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
     steps:
