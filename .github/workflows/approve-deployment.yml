@@ -2,6 +2,8 @@
 # docs on these triggers:
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#deployment_status
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+name: auto-approve
+
 on:
   deployment_status:
   workflow_dispatch:
@@ -21,7 +23,7 @@ jobs:
       - run: pwd && ls -al
 
       - name: Auto Approve Deploys
-        uses: ./action.yml
+        uses: .
         with:
           github_token: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
           environment_allow_list: |
