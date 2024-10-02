@@ -18,7 +18,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - run: ls -al
+      - run: pwd && ls -al
 
       - name: Auto Approve Deploys
         uses: ./action.yml
