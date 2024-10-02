@@ -65,45 +65,45 @@ jobs:
           path: stage_state
           overwrite: true
   
-  deployDevAutoApprove:
-    runs-on: ubuntu-latest
-    name: Deploy to DEV Auto Approve
-    needs: init
+  # deployDevAutoApprove:
+  #   runs-on: ubuntu-latest
+  #   name: Deploy to DEV Auto Approve
+  #   needs: init
 
-    env:
-      GH_TOKEN: ${{ github.token }}
+  #   env:
+  #     GH_TOKEN: ${{ github.token }}
 
-    permissions: write-all
+  #   permissions: write-all
 
-    if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
+  #   if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
-    steps:
-      - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
+  #   steps:
+  #     - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
       
-      - name: Get Environment Id
-        id: environment-id
-        run: |
-          envs=$(gh api repos/${{ github.repository }}/environments)
+  #     - name: Get Environment Id
+  #       id: environment-id
+  #       run: |
+  #         envs=$(gh api repos/${{ github.repository }}/environments)
 
-          environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
-          echo "ENVID=$environmentId" >> $GITHUB_ENV
+  #         environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
+  #         echo "ENVID=$environmentId" >> $GITHUB_ENV
       
-      - name: Get Pending Deployments
-        id: pending-deployments
-        run: |
-          gh api /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments --verbose
+  #     - name: Get Pending Deployments
+  #       id: pending-deployments
+  #       run: |
+  #         gh api /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments --verbose
 
-          echo "pending=true" >> $GITHUB_OUTPUT
+  #         echo "pending=true" >> $GITHUB_OUTPUT
       
-      - name: Approve Pending Deployment
-        if: steps.pending-deployments.outputs.pending != '[]'
-        run: |
-          gh api --method POST                            \
-            -F "environment_ids[]=$ENVID"                 \
-            -f "state=approved"                           \
-            -f "comment=Auto-Approved by GitHub Actions"  \
-            --verbose \
-            repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
+  #     - name: Approve Pending Deployment
+  #       if: steps.pending-deployments.outputs.pending != '[]'
+  #       run: |
+  #         gh api --method POST                            \
+  #           -F "environment_ids[]=$ENVID"                 \
+  #           -f "state=approved"                           \
+  #           -f "comment=Auto-Approved by GitHub Actions"  \
+  #           --verbose \
+  #           repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
   deployProd:
     runs-on: ubuntu-latest
