@@ -2,27 +2,27 @@
 # docs on these triggers:
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#deployment_status
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+
+
 name: auto-approve
 
 on:
-  deployment_status:
+  deployment:
   workflow_dispatch:
 
 jobs:
   auto_approve:
-    if: |
-      github.event_name == 'workflow_dispatch' || (
-        github.event_name == 'deployment_status' &&
-        github.event.workflow_run.status == 'waiting'
-      )
+    # if: |
+    #   github.event_name == 'workflow_dispatch' || (
+    #     github.event_name == 'deployment_status' &&
+    #     github.event.workflow_run.status == 'waiting'
+    #   )
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - run: pwd && ls -al
-
-      - name: Auto Approve Deploys
+      - name: Auto Approve Deploy
         uses: ./
         with:
           github_token: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
