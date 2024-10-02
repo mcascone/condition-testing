@@ -15,6 +15,9 @@ jobs:
       )
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Auto Approve Deploys
         uses: ./action.yml
         with:
