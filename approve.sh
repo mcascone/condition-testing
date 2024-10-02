@@ -1,17 +1,17 @@
 #!/bin/bash
 
-gh api  --verbose   repos/$REPO/actions/runs/$RUNID/pending_deployments \
+gh api repos/$REPO/actions/runs/$RUNID/pending_deployments  \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28"    \
   --method POST                                       \
   -F environment_ids[]=$ENVID                     \
-  -f state=approved                                 \
-  -f comment="Auto-Approved by GitHub Actions"      
+  -f state="approved"                                 \
+  -f comment="Auto-Approved by GitHub Actions"      \
+--verbose
 
 
 
-
-
-# curl -L \
-#   -X POST -v \
+# curl -Lv \
 #   -H "Accept: application/vnd.github+json" \
 #   -H "Authorization: Bearer $GH_TOKEN" \
 #   -H "X-GitHub-Api-Version: 2022-11-28" \
