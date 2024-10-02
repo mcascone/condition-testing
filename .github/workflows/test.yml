@@ -104,7 +104,6 @@ jobs:
         if: steps.pending-deployments.outputs.pending == 'true'
         uses: ./
         with:
-          github_token: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
           environment_allow_list: |
             DEV
           actor_allow_list: |
