@@ -99,6 +99,10 @@ jobs:
           fi
 
           echo "pending=$pending" >> $GITHUB_OUTPUT
+
+      - name: checkout
+        uses: actions/checkout@v4
+        if: steps.pending-deployments.outputs.pending == 'true'
       
       - name: Approve Pending Deployment
         if: steps.pending-deployments.outputs.pending == 'true'
