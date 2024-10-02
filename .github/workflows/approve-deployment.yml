@@ -25,7 +25,7 @@ jobs:
       - name: Auto Approve Deploys
         uses: ./
         with:
-          github_token: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
+          github_token: ${{ github.token }}
           environment_allow_list: |
             DEV
           # the below automatically approves dependabot and anything submitted by the Github user with login "mcascone"
