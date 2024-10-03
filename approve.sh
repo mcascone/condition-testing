@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gh api repos/mcascone/condition-testing/actions/runs/11168574652/pending_deployments  \
+gh api repos/mcascone/condition-testing/actions/runs/11168894291/pending_deployments  \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28"    \
   --method POST                                       \

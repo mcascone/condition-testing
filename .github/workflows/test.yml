@@ -44,15 +44,13 @@ jobs:
 
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
-      # GH_TOKEN: ${{ secrets.GH_AUTO_APPROVE_FINE_GRAINED}}
 
-    # if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
-    if: false
+    if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
     steps:
       - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
       
-      - name: Get Environment Id
+      - name: Get Environment ID
         id: environment-id
         run: |
           envs=$(gh api repos/${{ github.repository }}/environments)
@@ -64,7 +62,7 @@ jobs:
       - name: Get Pending Deployments
         id: pending-deployments
         run: |
-          result=$(gh api /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments)
+          result=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments)
 
           pending=false
           if [[ "$result" != '[]' ]]; then
@@ -82,4 +80,4 @@ jobs:
             -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
-            /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
+            repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
