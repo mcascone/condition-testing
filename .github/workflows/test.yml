@@ -24,16 +24,6 @@ jobs:
           echo "runDev=true" >> $GITHUB_OUTPUT
           echo "runProd=true" >> $GITHUB_OUTPUT
           echo "devApprovalNeeded=false" >> $GITHUB_OUTPUT
-
-      - name: save stage state
-        run: echo $GITHUB_JOB > stage_state
-
-      - name: archive state file
-        uses: actions/upload-artifact@v4
-        with:
-          name: stage_state
-          path: stage_state
-          overwrite: true
   
   deployDev:
     runs-on: ubuntu-latest
@@ -46,24 +36,6 @@ jobs:
     steps:
       - name: deploy dev
         run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
-
-      - name: get stage state
-        uses: actions/download-artifact@v4
-        with:
-          name: stage_state
-
-      - name: read stage state
-        run: echo "previous job was $(cat stage_state)" >> $GITHUB_STEP_SUMMARY
-
-      - name: save stage state
-        run: echo $GITHUB_JOB > stage_state
-
-      - name: archive state file
-        uses: actions/upload-artifact@v4
-        with:
-          name: stage_state
-          path: stage_state
-          overwrite: true
   
   deployDevAutoApprove:
     runs-on: ubuntu-latest
@@ -127,10 +99,3 @@ jobs:
       - name: deploy prod
         run: echo "Deploying to PRD" >> $GITHUB_STEP_SUMMARY
 
-      - name: get stage state
-        uses: actions/download-artifact@v4
-        with:
-          name: stage_state
-
-      - name: read stage state
-        run: echo "previous job was $(cat stage_state)" >> $GITHUB_STEP_SUMMARY
