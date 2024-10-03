@@ -1,14 +1,13 @@
 #!/bin/bash
 
-gh api repos/mcascone/condition-testing/actions/runs/11148670910/pending_deployments  \
+gh api repos/mcascone/condition-testing/actions/runs/11168574652/pending_deployments  \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28"    \
-#   --method POST                                       \
-#   -F "environment_ids[]=11130481765"                    \
-#   -f "state=approved"                                 \
-#   -f "comment=Auto-Approved by GitHub Actions"      \
-# --verbose
-
+  --method POST                                       \
+  -F "environment_ids[]=4099217113"                    \
+  -f "state=approved"                                 \
+  -f "comment=Auto-Approved by GitHub Actions CLI"      \
+  --verbose
 
 
 # curl -L \
