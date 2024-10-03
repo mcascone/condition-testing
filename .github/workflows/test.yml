@@ -43,7 +43,8 @@ jobs:
     needs: init
 
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
+      # GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
+      GH_TOKEN: ${{ secrets.GH_AUTO_APPROVE_FINE_GRAINED}}
 
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
@@ -59,7 +60,6 @@ jobs:
           echo "ENVID=$environmentId" >> $GITHUB_ENV
       
       # only approve if there are pending deployments in the current run
-      # TODO: the called action will likely still catch deploys in other runs... not what we want
       - name: Get Pending Deployments
         id: pending-deployments
         run: |
@@ -81,7 +81,6 @@ jobs:
             -F "environment_ids[]=$ENVID"                 \
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
-            --verbose \
             /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
 
 
