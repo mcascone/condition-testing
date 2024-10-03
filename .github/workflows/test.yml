@@ -43,10 +43,11 @@ jobs:
     needs: init
 
     env:
-      # GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
-      GH_TOKEN: ${{ secrets.GH_AUTO_APPROVE_FINE_GRAINED}}
+      GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
+      # GH_TOKEN: ${{ secrets.GH_AUTO_APPROVE_FINE_GRAINED}}
 
-    if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
+    # if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
+    if: false
 
     steps:
       - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
@@ -82,32 +83,3 @@ jobs:
             -f "state=approved"                           \
             -f "comment=Auto-Approved by GitHub Actions"  \
             /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
-
-
-      # - name: checkout
-      #   uses: actions/checkout@v4
-      #   if: steps.pending-deployments.outputs.pending == 'true'
-      
-      # - name: Approve Pending Deployment
-      #   if: steps.pending-deployments.outputs.pending == 'true'
-      #   uses: ./
-      #   with:
-      #     github_token: ${{ env.GH_TOKEN }}
-      #     environment_allow_list: |
-      #       DEV
-      #     actor_allow_list: |
-      #       dependabot[bot]
-      #       mcascone
-
-  deployProd:
-    runs-on: ubuntu-latest
-    name: Deploy to PROD
-    environment: PRD
-    needs: [init, deployDev]
-
-    if: ${{ needs.init.outputs.runProd == 'true' }}
-
-    steps:
-      - name: deploy prod
-        run: echo "Deploying to PRD" >> $GITHUB_STEP_SUMMARY
-
