@@ -43,7 +43,7 @@ jobs:
     needs: init
 
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS}}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
 
