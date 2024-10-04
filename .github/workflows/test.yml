@@ -39,7 +39,9 @@ jobs:
 
 
       - name: print env
-        run: echo "${{ toJson(job) }}"
+        run: |
+          echo "github.job: ${{ github.job }}"
+          
   
   # deployDevAutoApprove:
   #   runs-on: ubuntu-latest
