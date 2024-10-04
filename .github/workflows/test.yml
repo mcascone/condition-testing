@@ -42,6 +42,7 @@ jobs:
         run: |
           echo "github.job: ${{ github.job }}"
           echo "github.job.name: ${{ github.job.name }}"
+          echo "github: ${{ toJson(github) }}"
 
   
   # deployDevAutoApprove:
