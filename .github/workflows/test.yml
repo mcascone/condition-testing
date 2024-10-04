@@ -41,7 +41,8 @@ jobs:
       - name: print env
         run: |
           echo "github.job: ${{ github.job }}"
-          
+          echo "github.job.name: ${{ github.job.name }}"
+
   
   # deployDevAutoApprove:
   #   runs-on: ubuntu-latest
