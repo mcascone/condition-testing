@@ -16,7 +16,7 @@ jobs:
       devApprovalNeeded: ${{ steps.set_output.outputs.devApprovalNeeded }}
 
     steps:
-      - name: Run tests
+      - name: Run init
         run: echo "Running init"
 
       - name: set output
@@ -25,20 +25,6 @@ jobs:
           echo "runDev=true" >> $GITHUB_OUTPUT
           echo "runProd=true" >> $GITHUB_OUTPUT
           echo "devApprovalNeeded=false" >> $GITHUB_OUTPUT
-
-      - name: get job names
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # get the current job name
-          jobname=$(gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name')
-          echo "jobName: $jobname"
-          
-          # get job directly
-          echo "jobID: $GITHUB_JOB_ID"
-          jobbo=$(gh api /repos/$GITHUB_REPOSITORY/actions/jobs/$GITHUB_JOB_ID)
-          echo "jobbo: $jobbo"
   
   deployDev:
     runs-on: ubuntu-latest
@@ -50,53 +36,19 @@ jobs:
     
     steps:
       - name: deploy dev
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name'
-          echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
+        run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
   
-  # deployDevAutoApprove:
-  #   runs-on: ubuntu-latest
-  #   name: Deploy to DEV Auto Approve
-  #   needs: init
+  deployDevAutoApprove:
+    runs-on: ubuntu-latest
+    name: Deploy to DEV Auto Approve
+    needs: init
+    if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
+    steps:
+      - uses: actions/checkout@v4
 
-  #   env:
-  #     GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
-
-  #   if: needs.init.outputs.runDev == 'true' && needs.init.outputs.devApprovalNeeded != 'true'
-
-  #   steps:
-  #     - run: echo "Deploy to DEV Auto Approved" >> $GITHUB_STEP_SUMMARY
-      
-  #     - name: Get Environment ID
-  #       id: environment-id
-  #       run: |
-  #         envs=$(gh api repos/${{ github.repository }}/environments)
-
-  #         environmentId=$(echo $envs | jq -r '.environments[] | select(.name=="DEV") | .id')
-  #         echo "ENVID=$environmentId" >> $GITHUB_ENV
-      
-  #     # only approve if there are pending deployments in the current run
-  #     - name: Get Pending Deployments
-  #       id: pending-deployments
-  #       run: |
-  #         result=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments)
-
-  #         pending=false
-  #         if [[ "$result" != '[]' ]]; then
-  #           pending=true
-  #         fi
-
-  #         echo "PENDING=$pending" >> $GITHUB_ENV
-      
-  #     - name: Approve Pending Deployment
-  #       if: env.PENDING == 'true'
-  #       run: |
-  #         gh api -H "Accept: application/vnd.github+json" \
-  #           -H "X-GitHub-Api-Version: 2022-11-28"         \
-  #           --method POST                                 \
-  #           -F "environment_ids[]=$ENVID"                 \
-  #           -f "state=approved"                           \
-  #           -f "comment=Auto-Approved by GitHub Actions"  \
-  #           repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments
+      - name: auto-approve
+        uses: ./action.yml
+        with:
+          env_to_approve: DEV
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN_FOR_AUTO_APPROVING_DEPLOYS }}
