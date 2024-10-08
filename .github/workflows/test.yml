@@ -30,8 +30,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          jobname=$(gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name')
-          echo "jobName: $jobname"
+          # get the current job name
+
+
+
+
+          gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name'
+          # echo "jobName: $jobname"
           echo "jobID: ${{ github.job }}"
   
   deployDev:
@@ -44,7 +49,9 @@ jobs:
     
     steps:
       - name: deploy dev
-        run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
+        run: |
+          gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name'
+          echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
   
   # deployDevAutoApprove:
   #   runs-on: ubuntu-latest
