@@ -31,13 +31,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # get the current job name
-
-
-
-
-          gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name'
-          # echo "jobName: $jobname"
-          echo "jobID: ${{ github.job }}"
+          jobname=$(gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name')
+          echo "jobName: $jobname"
+          
+          # get job directly
+          echo "jobID: $GITHUB_JOB_ID"
+          jobbo=$(gh api /repos/$GITHUB_REPOSITORY/actions/jobs/$GITHUB_JOB_ID)
+          echo "jobbo: $jobbo"
   
   deployDev:
     runs-on: ubuntu-latest
