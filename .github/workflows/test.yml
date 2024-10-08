@@ -7,6 +7,7 @@ on:
 
 jobs:
   init:
+    name: INIT_NAME
     runs-on: ubuntu-latest
 
     outputs: 
@@ -24,26 +25,23 @@ jobs:
           echo "runDev=true" >> $GITHUB_OUTPUT
           echo "runProd=true" >> $GITHUB_OUTPUT
           echo "devApprovalNeeded=false" >> $GITHUB_OUTPUT
-  
-  deployDev:
-    runs-on: ubuntu-latest
-    name: Deploy to DEV
-    environment: DEV
-    needs: init
 
-    if: needs.init.outputs.runDev == 'true'
-    
-    steps:
-      - name: deploy dev
-        run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
-
-
-      - name: print env
+      - name: get job names
         run: |
-          echo "github.job: ${{ github.job }}"
-          echo "github.job.name: ${{ github.job.name }}"
-          echo "github: ${{ toJson(github) }}"
+          jobname=$(gh api /repos/$REPO/actions/runs/${{ github.run_id }}/jobs)
+          echo "jobName: $jobname"
+          echo "jobID: ${{ github.job }}"
+  # deployDev:
+  #   runs-on: ubuntu-latest
+  #   name: Deploy to DEV
+  #   environment: DEV
+  #   needs: init
 
+  #   if: needs.init.outputs.runDev == 'true'
+    
+  #   steps:
+  #     - name: deploy dev
+  #       run: echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
   
   # deployDevAutoApprove:
   #   runs-on: ubuntu-latest
