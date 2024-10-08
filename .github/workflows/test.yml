@@ -49,6 +49,8 @@ jobs:
     
     steps:
       - name: deploy dev
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api /repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs | jq -r '.jobs[].name'
           echo "Deploying to DEV" >> $GITHUB_STEP_SUMMARY
